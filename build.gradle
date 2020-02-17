@@ -1,0 +1,25 @@
+plugins {
+    id 'com.sidneysimmons.gradle-plugin-docker' version '0.0.7'
+}
+
+group = 'alexander.ivanov'
+version = '0.0.1'
+
+/*
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+*/
+

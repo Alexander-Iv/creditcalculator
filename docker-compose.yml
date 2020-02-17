@@ -1,0 +1,35 @@
+version: "3.7"
+services:
+  database:
+    container_name: "creditcalculator-database"
+    build: ./database/
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+    init: true
+
+  backend:
+    container_name: "creditcalculator-backend"
+    build: ./backend/
+    depends_on:
+      - database
+    environment:
+      - logging_level=debug
+      - APP_NAME=backend
+      - APP_VERSION=0.0.1
+      - APP_HOST=localhost:5432
+      - APP_DB=creditcalculatordb
+      - APP_USER=creditcalculator
+      - APP_PASSWORD=yZnaaX4ZeIeVdahDedQQ
+
+  frontend:
+    container_name: "creditcalculator-frontend"
+    build: ./frontend/
+    depends_on:
+      - backend
+    ports:
+      - "8080:8080"
+volumes:
+  db-data:
