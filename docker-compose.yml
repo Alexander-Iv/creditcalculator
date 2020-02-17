@@ -9,6 +9,9 @@ services:
       - "5432:5432"
     restart: always
     init: true
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
 
   backend:
     container_name: "creditcalculator-backend"
