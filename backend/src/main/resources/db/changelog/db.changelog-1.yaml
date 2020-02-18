@@ -5,29 +5,103 @@ databaseChangeLog:
       runOnChange: true
       changes:
         - createTable:
-            catalogName: polls
-            tableName: poll
+            catalogName: creditcalculatordb
+            tableName: interest_rate
             columns:
               - column:
-                  name: POLL_ID
+                  name: itrt_id
                   type: bigint
                   autoIncrement: true
                   constraints:
                     - primaryKey: true
-                    - primaryKeyName: pk_poll
+                    - primaryKeyName: pk_itrt
               - column:
-                  name: POLL_NAME
-                  type: text
-              - column:
-                  name: START_DATE
-                  type: timestamp
-              - column:
-                  name: END_DATE
-                  type: timestamp
-              - column:
-                  name: ACTIVITY
-                  type: BOOLEAN
+                  name: itrt_rate
+                  type: float
+                  constraints:
+                    - unique
         - rollback:
             dropTable:
-              catalogName: polls
-              tableName: question
+              catalogName: creditcalculatordb
+              tableName: interest_rate
+  - changeSet:
+      id: 2
+      author: alexander.an.ivanov@gmail.com
+      runOnChange: true
+      changes:
+        - createTable:
+            catalogName: creditcalculatordb
+            tableName: credit
+            columns:
+              - column:
+                  name: credit_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    - primaryKey: true
+                    - primaryKeyName: pk_credit
+              - column:
+                  name: credit_amount
+                  type: integer
+              - column:
+                  name: credit_time
+                  type: integer
+              - column:
+                  name: itrt_itrt_id
+                  type: bigint
+                  constraints:
+                    - nullable: false
+                    - foreignKeyName: fk_credit_interest_rate
+                    - references: interest_rate(itrt_id)
+        - rollback:
+            dropTable:
+              catalogName: creditcalculatordb
+              tableName: credit
+  - changeSet:
+      id: 3
+      author: alexander.an.ivanov@gmail.com
+      runOnChange: true
+      changes:
+        - createTable:
+            catalogName: creditcalculatordb
+            tableName: credit_calc_info
+            columns:
+              - column:
+                  name: credit_calc_info_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    - primaryKey: true
+                    - primaryKeyName: pk_credit_calc_info
+              - column:
+                  name: payment_num
+                  type: integer
+              - column:
+                  name: monthly_payment
+                  type: float
+              - column:
+                  name: period
+                  type: text
+              - column:
+                  name: debt_repayment_portion
+                  type: float
+              - column:
+                  name: interest_charges
+                  type: float
+              - column:
+                  name: debt_balance
+                  type: float
+              - column:
+                  name: total_payment_amount
+                  type: float
+              - column:
+                  name: credit_credit_id
+                  type: bigint
+                  constraints:
+                    - nullable: false
+                    - foreignKeyName: fk_credit_calc_info_credit
+                    - references: credit(credit_id)
+        - rollback:
+            dropTable:
+              catalogName: creditcalculatordb
+              tableName: credit_calc_info

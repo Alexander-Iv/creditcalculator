@@ -1,34 +1,20 @@
 databaseChangeLog:
   - changeSet:
-      id: 2
+      id: 4
       author: alexander.an.ivanov@gmail.com
       runOnChange: true
       changes:
-        - createTable:
-            catalogName: polls
-            tableName: question
-            columns:
-              - column:
-                  name: QSTN_ID
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    - primaryKey: true
-                    - primaryKeyName: pk_question
-              - column:
-                  name: CONTENT
-                  type: text
-              - column:
-                  name: ORDER_NUM
-                  type: integer
-              - column:
-                  name: POLL_POLL_ID
-                  type: bigint
-                  constraints:
-                    - nullable: false
-                    - foreignKeyName: fk_question_poll
-                    - references: poll(poll_id)
-        - rollback:
-            dropTable:
-              catalogName: polls
-              tableName: question
+        - sql:
+            splitStatements: false
+            sql: "DO $$
+                   DECLARE
+                       rate float;
+                   BEGIN
+                       for rate in
+                           (select generate_series(129,239)/10::float)
+                       LOOP
+                           RAISE NOTICE 'rate = %', rate;
+                           insert into interest_rate(itrt_rate) values (rate);
+                       END LOOP;
+                   END
+               $$"
