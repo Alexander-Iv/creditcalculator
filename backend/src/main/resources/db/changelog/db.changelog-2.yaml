@@ -7,14 +7,14 @@ databaseChangeLog:
         - sql:
             splitStatements: false
             sql: "DO $$
-                   DECLARE
-                       rate float;
-                   BEGIN
-                       for rate in
-                           (select generate_series(129,239)/10::float)
-                       LOOP
-                           RAISE NOTICE 'rate = %', rate;
-                           insert into interest_rate(itrt_rate) values (rate);
-                       END LOOP;
-                   END
-               $$"
+                      DECLARE
+                          rate interest_rate.itrt_rate%type;
+                      BEGIN
+                          for rate in
+                              (SELECT t FROM generate_series(12.9, 23.9, 0.1) t)
+                          LOOP
+                              RAISE NOTICE 'rate = %', rate;
+                              insert into interest_rate(itrt_rate) values (rate);
+                          END LOOP;
+                      END
+                  $$"
