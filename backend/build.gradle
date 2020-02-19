@@ -1,19 +1,25 @@
 plugins {
-    id 'org.springframework.boot' version '2.2.4.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'org.springframework.boot' version "$springBootVersion"
+    id 'io.spring.dependency-management' version "$springDependencyManagementVersion"
     id 'java'
 }
 
 group = 'alexander.ivanov.creditcalculator'
 version = '0.0.1'
-sourceCompatibility = '1.8'
+sourceCompatibility = "$javaVersion"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    implementation group: 'org.postgresql', name: 'postgresql', version: postgresqlVersion
+    implementation group: 'org.liquibase', name: 'liquibase-core', version: liquibaseVersion
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: modelMapperVersion
+
     implementation 'org.liquibase:liquibase-core'
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {

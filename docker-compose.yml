@@ -15,24 +15,30 @@ services:
 
   backend:
     container_name: "creditcalculator-backend"
-    build: ./backend/
+    build:
+      context: ./backend
+      args:
+        - APPLICATION_NAME=backend
+        - APPLICATION_VERSION=0.0.1
+        - APPLICATION_HOST=database
+        - APPLICATION_DB=creditcalculatordb
+        - APPLICATION_USER=creditcalculator
+        - APPLICATION_PASSWORD=yZnaaX4ZeIeVdahDedQQ
     depends_on:
       - database
-    environment:
-      - logging_level=debug
-      - APP_NAME=backend
-      - APP_VERSION=0.0.1
-      - APP_HOST=localhost:5432
-      - APP_DB=creditcalculatordb
-      - APP_USER=creditcalculator
-      - APP_PASSWORD=yZnaaX4ZeIeVdahDedQQ
+    ports:
+      - "8080:8080"
 
   frontend:
     container_name: "creditcalculator-frontend"
-    build: ./frontend/
+    build:
+      context: ./frontend/
+      args:
+        - APPLICATION_NAME=frontend
+        - APPLICATION_VERSION=0.0.1
     depends_on:
       - backend
     ports:
-      - "8080:8080"
+      - "8081:8080"
 volumes:
   db-data:
