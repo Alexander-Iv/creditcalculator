@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/api/credit-calc-info")
+@RequestMapping("/api/credit-calc-infos")
 @RestController
 public class CreditCalcInfoController {
     private CreditCalcInfoService creditCalcInfoService;
