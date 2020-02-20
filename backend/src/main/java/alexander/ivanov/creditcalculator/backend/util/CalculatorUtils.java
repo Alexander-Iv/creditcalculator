@@ -104,14 +104,15 @@ public class CalculatorUtils {
             int paymentNum = credit.getCreditTime() - i;
 
             CreditCalcInfo creditCalcInfo = new CreditCalcInfo(
-                    credit.getCreditId(),
+                    null,
                     paymentNum+1,
                     monthlyPayment,
                     localStartDate.plusMonths(paymentNum).format(DateTimeFormatter.ofPattern("MM/yyyy")),
                     debtRepaymentPortion,
                     interestCharges,
                     CalculatorUtils.round2(debt),
-                    CalculatorUtils.round2(total)
+                    CalculatorUtils.round2(total),
+                    credit
             );
 
             System.out.println(creditCalcInfo);
@@ -121,6 +122,12 @@ public class CalculatorUtils {
         credit.setCreditCalcInfos(creditCalcInfos);
 
         return credit.getCreditCalcInfos();
+    }
+
+    public static void printCreditCalcInfos(List<CreditCalcInfo> creditCalcInfos) {
+        creditCalcInfos.forEach(creditCalcInfo -> {
+            System.out.println("creditCalcInfo = " + creditCalcInfo);
+        });
     }
 
     public static void printCreditRepaymentGraph(Date startDate, Integer creditAmount, Integer creditTime, Double annualInterestRate) {

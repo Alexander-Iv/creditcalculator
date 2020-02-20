@@ -40,7 +40,8 @@ public class CreditCalcInfo {
     }
 
     public CreditCalcInfo(Long creditCalcInfoId, Integer paymentNum, Double monthlyPayment, String period,
-                          Double debtRepaymentPortion, Double interestCharges, Double debtBalance, Double totalPaymentAmount) {
+                          Double debtRepaymentPortion, Double interestCharges, Double debtBalance, Double totalPaymentAmount,
+                          Credit credit) {
         this.creditCalcInfoId = creditCalcInfoId;
         this.paymentNum = paymentNum;
         this.monthlyPayment = monthlyPayment;
@@ -49,6 +50,7 @@ public class CreditCalcInfo {
         this.interestCharges = interestCharges;
         this.debtBalance = debtBalance;
         this.totalPaymentAmount = totalPaymentAmount;
+        this.credit = credit;
     }
 
     public Long getCreditCalcInfoId() {

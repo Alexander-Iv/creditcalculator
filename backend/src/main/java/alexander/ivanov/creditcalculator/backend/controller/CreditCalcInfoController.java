@@ -5,14 +5,10 @@ import alexander.ivanov.creditcalculator.backend.model.CreditCalcInfo;
 import alexander.ivanov.creditcalculator.backend.model.dto.CreditDto;
 import alexander.ivanov.creditcalculator.backend.service.CreditCalcInfoService;
 import alexander.ivanov.creditcalculator.backend.service.CreditService;
-import alexander.ivanov.creditcalculator.backend.util.CalculatorUtils;
 import alexander.ivanov.creditcalculator.backend.util.ModelMapperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,12 +31,29 @@ public class CreditCalcInfoController {
 
     @GetMapping("/credit-calc-info")
     public ResponseEntity<?> getCreditCalcInfo(@RequestBody CreditDto creditDto) {
-        Credit mappedCredit = ModelMapperUtils.map(CreditDto.class, Credit.class, creditDto);
-        Credit loadedCredit = creditService.selectCredit(mappedCredit);
-        List<CreditCalcInfo> creditCalcInfos = creditCalcInfoService.selectAllByCredit(loadedCredit);
+        try {
+            Credit mappedCredit = ModelMapperUtils.map(CreditDto.class, Credit.class, creditDto);
+            Credit loadedCredit = creditService.selectCredit(mappedCredit);
+            List<CreditCalcInfo> creditCalcInfos = creditCalcInfoService.selectAllByCredit(loadedCredit);
 
-        //CalculatorUtils
+            return ResponseEntity.ok(creditCalcInfos);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
-        return ResponseEntity.ok(creditCalcInfos);
+    @PostMapping("/credit-calc-info")
+    public ResponseEntity<?> createCreditCalcInfo(@RequestBody CreditDto creditDto) {
+        try {
+            Credit mappedCredit = ModelMapperUtils.map(CreditDto.class, Credit.class, creditDto);
+            Credit loadedCredit = creditService.selectCredit(mappedCredit);
+            List<CreditCalcInfo> creditCalcInfos = creditCalcInfoService.insertCreditCalcInfo(loadedCredit);
+
+            return ResponseEntity.ok(creditCalcInfos);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
