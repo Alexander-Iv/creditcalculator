@@ -6,7 +6,6 @@ import alexander.ivanov.creditcalculator.backend.repository.CreditCalcInfoReposi
 import alexander.ivanov.creditcalculator.backend.util.CalculatorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,14 +18,23 @@ public class CreditCalcInfoService {
         this.creditCalcInfoRepository = creditCalcInfoRepository;
     }
 
-    @Transactional
     public List<CreditCalcInfo> insertCreditCalcInfo(Credit credit) {
-        List<CreditCalcInfo> creditCalcInfos = CalculatorUtils.fillCreditCalcInfos(credit);
-        CalculatorUtils.printCreditCalcInfos(creditCalcInfos);
-        /*creditCalcInfos.forEach(creditCalcInfo -> {
-            creditCalcInfoRepository.save(creditCalcInfo);
-        });*/
-        return creditCalcInfoRepository.saveAll(creditCalcInfos);
+        System.out.println("CreditCalcInfoService.insertCreditCalcInfo");
+
+        Credit creditCopy = CalculatorUtils.fillCreditCalcInfos(credit);
+        CalculatorUtils.printCreditCalcInfos(creditCopy.getCreditCalcInfos());
+
+        List<CreditCalcInfo> creditCalcInfos = creditCalcInfoRepository.saveAll(creditCopy.getCreditCalcInfos());
+
+
+        System.out.println("!RESULT");
+        creditCalcInfos.forEach(creditCalcInfo -> {
+            System.out.println("creditCalcInfo = " + creditCalcInfo);
+        });
+
+        return creditCalcInfos;
+
+        //return creditCalcInfoRepository.saveAll(creditCalcInfos);
     }
 
     public List<CreditCalcInfo> selectAll() {

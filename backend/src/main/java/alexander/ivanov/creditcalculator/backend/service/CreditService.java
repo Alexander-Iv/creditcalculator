@@ -5,7 +5,6 @@ import alexander.ivanov.creditcalculator.backend.model.InterestRate;
 import alexander.ivanov.creditcalculator.backend.repository.CreditRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,7 +36,6 @@ public class CreditService {
         }
     }
 
-    @Transactional
     public Credit selectCredit(Credit credit) {
         System.out.println("CreditService.selectCredit");
         System.out.println("credit = " + credit);

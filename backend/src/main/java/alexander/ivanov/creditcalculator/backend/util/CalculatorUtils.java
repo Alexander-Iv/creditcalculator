@@ -15,9 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.IsoFields;
 import java.time.temporal.TemporalUnit;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class CalculatorUtils {
     private static final int SCALE_DEFAULT = 2;
@@ -78,12 +76,18 @@ public class CalculatorUtils {
         return round(monthlyPayment - interestCharges);
     }
 
-    public static List<CreditCalcInfo> fillCreditCalcInfos(Credit credit) {
+    public static Credit fillCreditCalcInfos(Credit credit) {
         return fillCreditCalcInfos(credit, Date.from(Instant.now()));
     }
 
-    public static List<CreditCalcInfo> fillCreditCalcInfos(Credit credit, Date startDate) {
+    public static Credit fillCreditCalcInfos(Credit credit, Date startDate) {
         List<CreditCalcInfo> creditCalcInfos = new ArrayList<>();
+
+        Credit copyCredit = new Credit();
+        copyCredit.setCreditId(credit.getCreditId());
+        copyCredit.setCreditAmount(credit.getCreditAmount());
+        copyCredit.setCreditTime(credit.getCreditTime());
+        copyCredit.setInterestRate(credit.getInterestRate());
 
         List<Double> portions = new ArrayList<>();
         Double debt = Double.valueOf(credit.getCreditAmount());
@@ -119,9 +123,12 @@ public class CalculatorUtils {
             creditCalcInfos.add(creditCalcInfo);
         }
 
-        credit.setCreditCalcInfos(creditCalcInfos);
+        //credit.getCreditCalcInfos().clear();
+        //credit.setCreditCalcInfos(creditCalcInfos);
+        copyCredit.setCreditCalcInfos(creditCalcInfos);
 
-        return credit.getCreditCalcInfos();
+        //return credit.getCreditCalcInfos();
+        return copyCredit;
     }
 
     public static void printCreditCalcInfos(List<CreditCalcInfo> creditCalcInfos) {
@@ -135,10 +142,11 @@ public class CalculatorUtils {
                 null,
                 creditAmount,
                 creditTime,
-                new InterestRate(annualInterestRate)
+                new InterestRate(annualInterestRate),
+                Collections.emptyList()
         );
 
-        fillCreditCalcInfos(credit, startDate).forEach(creditCalcInfo -> {
+        fillCreditCalcInfos(credit, startDate).getCreditCalcInfos().forEach(creditCalcInfo -> {
             String format = String.format("paymentNum = %10s, " +
                             "monthlyPayment = %10s " +
                             "mm/yyyy = %10s " +

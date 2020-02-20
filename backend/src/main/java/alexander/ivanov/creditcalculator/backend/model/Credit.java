@@ -1,5 +1,7 @@
 package alexander.ivanov.creditcalculator.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -22,17 +24,18 @@ public class Credit {
     @JoinColumn(name = "itrt_itrt_id", referencedColumnName = "itrt_id")
     private InterestRate interestRate;
 
-    @OneToMany(mappedBy = "credit", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "credit", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<CreditCalcInfo> creditCalcInfos;
 
     public Credit() {
     }
 
-    public Credit(Long creditId, Integer creditAmount, Integer creditTime, InterestRate interestRate) {
+    public Credit(Long creditId, Integer creditAmount, Integer creditTime, InterestRate interestRate, List<CreditCalcInfo> creditCalcInfos) {
         this.creditId = creditId;
         this.creditAmount = creditAmount;
         this.creditTime = creditTime;
         this.interestRate = interestRate;
+        this.creditCalcInfos = creditCalcInfos;
     }
 
     public Long getCreditId() {

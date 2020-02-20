@@ -1,5 +1,7 @@
 package alexander.ivanov.creditcalculator.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -32,8 +34,9 @@ public class CreditCalcInfo {
     @Column(name = "total_payment_amount")
     private Double totalPaymentAmount;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "credit_credit_id", referencedColumnName = "credit_id")
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "credit_credit_id"/*, referencedColumnName = "credit_id"*/)
     private Credit credit;
 
     public CreditCalcInfo() {
