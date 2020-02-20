@@ -8,7 +8,8 @@ public class CreditDto {
     private String creditTime;
     @JsonProperty("interestRate")
     private InterestRateDto interestRateDto;
-
+    @JsonProperty("creditCalcInfo")
+    private CreditCalcInfoDto creditCalcInfoDto;
 
     public CreditDto() {
     }
@@ -43,6 +44,14 @@ public class CreditDto {
 
     public void setInterestRateDto(InterestRateDto interestRateDto) {
         this.interestRateDto = interestRateDto;
+    }
+
+    public CreditCalcInfoDto getCreditCalcInfoDto() {
+        return creditCalcInfoDto;
+    }
+
+    public void setCreditCalcInfoDto(CreditCalcInfoDto creditCalcInfoDto) {
+        this.creditCalcInfoDto = creditCalcInfoDto;
     }
 
     @Override

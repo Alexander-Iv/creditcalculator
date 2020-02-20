@@ -32,11 +32,23 @@ public class CreditCalcInfo {
     @Column(name = "total_payment_amount")
     private Double totalPaymentAmount;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "credit_credit_id", referencedColumnName = "credit_id")
     private Credit credit;
 
     public CreditCalcInfo() {
+    }
+
+    public CreditCalcInfo(Long creditCalcInfoId, Integer paymentNum, Double monthlyPayment, String period,
+                          Double debtRepaymentPortion, Double interestCharges, Double debtBalance, Double totalPaymentAmount) {
+        this.creditCalcInfoId = creditCalcInfoId;
+        this.paymentNum = paymentNum;
+        this.monthlyPayment = monthlyPayment;
+        this.period = period;
+        this.debtRepaymentPortion = debtRepaymentPortion;
+        this.interestCharges = interestCharges;
+        this.debtBalance = debtBalance;
+        this.totalPaymentAmount = totalPaymentAmount;
     }
 
     public Long getCreditCalcInfoId() {

@@ -1,6 +1,7 @@
 package alexander.ivanov.creditcalculator.backend.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "credit")
@@ -21,7 +22,17 @@ public class Credit {
     @JoinColumn(name = "itrt_itrt_id", referencedColumnName = "itrt_id")
     private InterestRate interestRate;
 
+    @OneToMany(mappedBy = "credit", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CreditCalcInfo> creditCalcInfos;
+
     public Credit() {
+    }
+
+    public Credit(Long creditId, Integer creditAmount, Integer creditTime, InterestRate interestRate) {
+        this.creditId = creditId;
+        this.creditAmount = creditAmount;
+        this.creditTime = creditTime;
+        this.interestRate = interestRate;
     }
 
     public Long getCreditId() {
@@ -54,6 +65,14 @@ public class Credit {
 
     public void setInterestRate(InterestRate interestRate) {
         this.interestRate = interestRate;
+    }
+
+    public List<CreditCalcInfo> getCreditCalcInfos() {
+        return creditCalcInfos;
+    }
+
+    public void setCreditCalcInfos(List<CreditCalcInfo> creditCalcInfos) {
+        this.creditCalcInfos = creditCalcInfos;
     }
 
     @Override

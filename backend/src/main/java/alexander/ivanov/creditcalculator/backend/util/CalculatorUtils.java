@@ -1,5 +1,9 @@
 package alexander.ivanov.creditcalculator.backend.util;
 
+import alexander.ivanov.creditcalculator.backend.model.Credit;
+import alexander.ivanov.creditcalculator.backend.model.CreditCalcInfo;
+import alexander.ivanov.creditcalculator.backend.model.InterestRate;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -74,9 +78,80 @@ public class CalculatorUtils {
         return round(monthlyPayment - interestCharges);
     }
 
-    public static void printCreditRepaymentGraph(Date startDate, Integer creditAmount, Integer creditTime, Double annualInterestRate) {
-        List<Double> portions = new ArrayList<>();
+    public static List<CreditCalcInfo> fillCreditCalcInfos(Credit credit) {
+        return fillCreditCalcInfos(credit, Date.from(Instant.now()));
+    }
 
+    public static List<CreditCalcInfo> fillCreditCalcInfos(Credit credit, Date startDate) {
+        List<CreditCalcInfo> creditCalcInfos = new ArrayList<>();
+
+        List<Double> portions = new ArrayList<>();
+        Double debt = Double.valueOf(credit.getCreditAmount());
+        for (int i = credit.getCreditTime(); i > 0; i--) {
+            Double monthlyPayment = CalculatorUtils.calcMonthlyPayment(credit.getCreditAmount(), credit.getCreditTime(), credit.getInterestRate().getInterestRate());
+            Double interestRateAbs = CalculatorUtils.calcInterestRateAbs(credit.getInterestRate().getInterestRate(), 12);
+            Double interestCharges = CalculatorUtils.calcInterestCharges(debt, credit.getInterestRate().getInterestRate());
+            Double debtRepaymentPortion = CalculatorUtils.debtRepaymentPortion(monthlyPayment, interestCharges);
+
+            debt -= debtRepaymentPortion;
+            portions.add(debtRepaymentPortion);
+
+            Double total = portions.stream().mapToDouble(aDouble -> aDouble).sum();
+
+            Instant startDateInstant = startDate.toInstant();
+            LocalDateTime localStartDate = LocalDateTime.ofInstant(startDateInstant, ZoneId.systemDefault());
+
+            int paymentNum = credit.getCreditTime() - i;
+
+            CreditCalcInfo creditCalcInfo = new CreditCalcInfo(
+                    credit.getCreditId(),
+                    paymentNum+1,
+                    monthlyPayment,
+                    localStartDate.plusMonths(paymentNum).format(DateTimeFormatter.ofPattern("MM/yyyy")),
+                    debtRepaymentPortion,
+                    interestCharges,
+                    CalculatorUtils.round2(debt),
+                    CalculatorUtils.round2(total)
+            );
+
+            System.out.println(creditCalcInfo);
+            creditCalcInfos.add(creditCalcInfo);
+        }
+
+        credit.setCreditCalcInfos(creditCalcInfos);
+
+        return credit.getCreditCalcInfos();
+    }
+
+    public static void printCreditRepaymentGraph(Date startDate, Integer creditAmount, Integer creditTime, Double annualInterestRate) {
+        Credit credit = new Credit(
+                null,
+                creditAmount,
+                creditTime,
+                new InterestRate(annualInterestRate)
+        );
+
+        fillCreditCalcInfos(credit, startDate).forEach(creditCalcInfo -> {
+            String format = String.format("paymentNum = %10s, " +
+                            "monthlyPayment = %10s " +
+                            "mm/yyyy = %10s " +
+                            //"interestRateAbs = %10s " +
+                            "interestCharges = %10s " +
+                            //"debtRepaymentPortion = %10s, " +
+                            "debt = %10s, " +
+                            "total = %10s",
+                    creditCalcInfo.getPaymentNum(),
+                    creditCalcInfo.getMonthlyPayment(),
+                    creditCalcInfo.getPeriod(),
+                    //interestRateAbs,
+                    creditCalcInfo.getInterestCharges(),
+                    //debtRepaymentPortion,
+                    creditCalcInfo.getDebtBalance(),
+                    creditCalcInfo.getTotalPaymentAmount());
+            System.out.println(format);
+        });
+
+        /*List<Double> portions = new ArrayList<>();
         Double debt = Double.valueOf(creditAmount);
         System.out.println("debt = " + debt);
         for (int i = creditTime; i > 0; i--) {
@@ -91,16 +166,8 @@ public class CalculatorUtils {
             Double total = portions.stream().mapToDouble(aDouble -> aDouble).sum();
 
             Instant startDateInstant = startDate.toInstant();
-            //System.out.println("startDateInstant = " + startDateInstant);
 
-            LocalDateTime localStartDate = /*LocalDate.of(
-                    startDateInstant.get(ChronoField.YEAR_OF_ERA),
-                    startDateInstant.get(ChronoField.MONTH_OF_YEAR),
-                    startDateInstant.get(ChronoField.DAY_OF_MONTH)
-                    );*/
-            //LocalDate.parse(startDateInstant.toString());
-            LocalDateTime.ofInstant(startDateInstant, ZoneId.systemDefault());
-            //System.out.println("localStartDate = " + localStartDate);
+            LocalDateTime localStartDate = LocalDateTime.ofInstant(startDateInstant, ZoneId.systemDefault());
 
             String format = String.format("paymentNum = %10s, " +
                             "monthlyPayment = %10s " +
@@ -119,7 +186,7 @@ public class CalculatorUtils {
                     CalculatorUtils.round2(debt),
                     CalculatorUtils.round2(total));
             System.out.println(format);
-        }
+        }*/
     }
 
     public static Double round2(Double value) {
