@@ -17,19 +17,6 @@ public class InterestRateService {
     }
 
     public List<InterestRate> getInterestRates() {
-        /*return Stream.of(interestRateRepository.findAll())
-                .map(Iterable::iterator)
-                .filter(Iterator::hasNext)
-                .map(Iterator::next)
-                .peek(interestRate -> {
-                    System.out.println("interestRate = " + interestRate);
-                })
-                .collect(Collectors.toList());*/
-        /*List<InterestRate> interestRates = new ArrayList<>();
-        interestRateRepository.findAll().forEach(interestRate -> {
-            System.out.println("interestRate = " + interestRate);
-            interestRates.add(interestRate);
-        });*/
         return interestRateRepository.findAll();
     }
 

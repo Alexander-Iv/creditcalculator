@@ -6,6 +6,8 @@ import javax.persistence.*;
 @Table(name = "credit_calc_info")
 public class CreditCalcInfo {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "credit_calc_info_seq")
+    @SequenceGenerator(name = "credit_calc_info_seq", sequenceName = "credit_calc_info_seq", allocationSize = 1)
     @Column(name = "credit_calc_info_id")
     private Long creditCalcInfoId;
 
@@ -30,8 +32,8 @@ public class CreditCalcInfo {
     @Column(name = "total_payment_amount")
     private Double totalPaymentAmount;
 
-    @OneToOne
-    @JoinColumn(name = "credit_credit_id")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "credit_credit_id", referencedColumnName = "credit_id")
     private Credit credit;
 
     public CreditCalcInfo() {
@@ -107,5 +109,20 @@ public class CreditCalcInfo {
 
     public void setCredit(Credit credit) {
         this.credit = credit;
+    }
+
+    @Override
+    public String toString() {
+        return "CreditCalcInfo{" +
+                "creditCalcInfoId=" + creditCalcInfoId +
+                ", paymentNum=" + paymentNum +
+                ", monthlyPayment=" + monthlyPayment +
+                ", period='" + period + '\'' +
+                ", debtRepaymentPortion=" + debtRepaymentPortion +
+                ", interestCharges=" + interestCharges +
+                ", debtBalance=" + debtBalance +
+                ", totalPaymentAmount=" + totalPaymentAmount +
+                ", credit=" + credit +
+                '}';
     }
 }

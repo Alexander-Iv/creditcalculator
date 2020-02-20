@@ -6,6 +6,8 @@ import javax.persistence.*;
 @Table(name = "credit")
 public class Credit {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "credit_seq")
+    @SequenceGenerator(name = "credit_seq", sequenceName = "credit_seq", allocationSize = 1)
     @Column(name = "credit_id")
     private Long creditId;
 
@@ -15,7 +17,7 @@ public class Credit {
     @Column(name = "credit_time")
     private Integer creditTime;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "itrt_itrt_id", referencedColumnName = "itrt_id")
     private InterestRate interestRate;
 
@@ -52,5 +54,15 @@ public class Credit {
 
     public void setInterestRate(InterestRate interestRate) {
         this.interestRate = interestRate;
+    }
+
+    @Override
+    public String toString() {
+        return "Credit{" +
+                "creditId=" + creditId +
+                ", creditAmount=" + creditAmount +
+                ", creditTime=" + creditTime +
+                ", interestRate=" + interestRate +
+                '}';
     }
 }

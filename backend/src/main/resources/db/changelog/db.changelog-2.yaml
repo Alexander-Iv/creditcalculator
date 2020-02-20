@@ -14,7 +14,7 @@ databaseChangeLog:
                               (SELECT t FROM generate_series(12.9, 23.9, 0.1) t)
                           LOOP
                               RAISE NOTICE 'rate = %', rate;
-                              insert into interest_rate(itrt_rate) values (rate);
+                              insert into interest_rate(itrt_id, itrt_rate) values (nextval('interest_rate_seq'), rate);
                           END LOOP;
                       END
                   $$"

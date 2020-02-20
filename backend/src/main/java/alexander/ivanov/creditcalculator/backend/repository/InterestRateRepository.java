@@ -8,6 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface InterestRateRepository extends JpaRepository<InterestRate, Long> {
-    //InterestRate findAllBy(Double interestRate);
     Optional<InterestRate> findByInterestRate(Double interestRate);
 }
