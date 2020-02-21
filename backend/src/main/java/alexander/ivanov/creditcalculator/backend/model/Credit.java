@@ -1,8 +1,7 @@
 package alexander.ivanov.creditcalculator.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,7 +24,7 @@ public class Credit {
     private InterestRate interestRate;
 
     @OneToMany(mappedBy = "credit", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<CreditCalcInfo> creditCalcInfos;
+    private List<CreditCalcInfo> creditCalcInfos = new ArrayList<>();
 
     public Credit() {
     }

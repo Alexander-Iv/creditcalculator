@@ -4,7 +4,7 @@ import alexander.ivanov.creditcalculator.backend.model.Credit;
 import alexander.ivanov.creditcalculator.backend.model.CreditCalcInfo;
 import alexander.ivanov.creditcalculator.backend.model.dto.CreditDto;
 import alexander.ivanov.creditcalculator.backend.service.CreditCalcInfoService;
-import alexander.ivanov.creditcalculator.backend.service.CreditService;
+import alexander.ivanov.creditcalculator.backend.util.ControllerUtils;
 import alexander.ivanov.creditcalculator.backend.util.ModelMapperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,44 +16,33 @@ import java.util.List;
 @RestController
 public class CreditCalcInfoController {
     private CreditCalcInfoService creditCalcInfoService;
-    private CreditService creditService;
 
     @Autowired
-    public CreditCalcInfoController(CreditCalcInfoService creditCalcInfoService, CreditService creditService) {
+    public CreditCalcInfoController(CreditCalcInfoService creditCalcInfoService) {
         this.creditCalcInfoService = creditCalcInfoService;
-        this.creditService = creditService;
     }
 
     @GetMapping("/credit-calc-infos")
     public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok(creditCalcInfoService.selectAll());
+        return ControllerUtils.getResponseEntity(() -> creditCalcInfoService.selectAll());
     }
 
     @GetMapping("/credit-calc-info")
     public ResponseEntity<?> getCreditCalcInfo(@RequestBody CreditDto creditDto) {
-        try {
+        return ControllerUtils.getResponseEntity(() -> {
             Credit mappedCredit = ModelMapperUtils.map(CreditDto.class, Credit.class, creditDto);
-            Credit loadedCredit = creditService.selectCredit(mappedCredit);
-            List<CreditCalcInfo> creditCalcInfos = creditCalcInfoService.selectAllByCredit(loadedCredit);
-
-            return ResponseEntity.ok(creditCalcInfos);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+            List<CreditCalcInfo> creditCalcInfos = creditCalcInfoService.selectCreditCalcInfos(mappedCredit);
+            return creditCalcInfos;
+        });
     }
 
     @PostMapping("/credit-calc-info")
     public ResponseEntity<?> createCreditCalcInfo(@RequestBody CreditDto creditDto) {
-        try {
+        return ControllerUtils.getResponseEntity(() -> {
             Credit mappedCredit = ModelMapperUtils.map(CreditDto.class, Credit.class, creditDto);
-            Credit loadedCredit = creditService.selectCredit(mappedCredit);
-            List<CreditCalcInfo> creditCalcInfos = creditCalcInfoService.insertCreditCalcInfo(loadedCredit);
+            List<CreditCalcInfo> creditCalcInfos = creditCalcInfoService.insertCreditCalcInfo(mappedCredit);
 
-            return ResponseEntity.ok(creditCalcInfos);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+            return creditCalcInfos;
+        });
     }
 }

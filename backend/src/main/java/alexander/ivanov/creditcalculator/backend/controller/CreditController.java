@@ -3,6 +3,7 @@ package alexander.ivanov.creditcalculator.backend.controller;
 import alexander.ivanov.creditcalculator.backend.model.Credit;
 import alexander.ivanov.creditcalculator.backend.model.dto.CreditDto;
 import alexander.ivanov.creditcalculator.backend.service.CreditService;
+import alexander.ivanov.creditcalculator.backend.util.ControllerUtils;
 import alexander.ivanov.creditcalculator.backend.util.ModelMapperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class CreditController {
 
     @GetMapping("/credits")
     public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok(creditService.selectCredits());
+        return ControllerUtils.getResponseEntity(() -> creditService.selectCredits());
     }
 
     @GetMapping("/credit")
@@ -28,20 +29,17 @@ public class CreditController {
         System.out.println("CreditController.getCredit");
         System.out.println("creditDto = " + creditDto);
 
-        Credit credit = null;
-        try {
+        return ControllerUtils.getResponseEntity(() -> {
             Credit mappedCredit = ModelMapperUtils.map(CreditDto.class, Credit.class, creditDto);
 
             System.out.println("mappedCredit = " + mappedCredit);
+
+            Credit credit = null;
             System.out.println("credit = " + credit);
-
             credit = creditService.selectCredit(mappedCredit);
-            return ResponseEntity.ok(credit);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+            return credit;
+        });
     }
 
     @PostMapping("/credit")
@@ -49,18 +47,15 @@ public class CreditController {
         System.out.println("CreditController.createCredit");
         System.out.println("creditDto = " + creditDto);
 
-        Credit credit = null;
-        try {
+        return ControllerUtils.getResponseEntity(() -> {
             Credit mappedCredit = ModelMapperUtils.map(CreditDto.class, Credit.class, creditDto);
 
             System.out.println("mappedCredit = " + mappedCredit);
-            credit = creditService.insertCredit(mappedCredit);
 
+            Credit credit = creditService.selectOrInsertIfNonExists(mappedCredit);
             System.out.println("credit = " + credit);
-            return ResponseEntity.ok(credit);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+
+            return credit;
+        });
     }
 }

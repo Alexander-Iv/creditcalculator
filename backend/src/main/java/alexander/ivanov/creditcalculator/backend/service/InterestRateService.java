@@ -4,9 +4,11 @@ import alexander.ivanov.creditcalculator.backend.model.InterestRate;
 import alexander.ivanov.creditcalculator.backend.repository.InterestRateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Transactional
 @Service
 public class InterestRateService {
     private InterestRateRepository interestRateRepository;
@@ -16,13 +18,13 @@ public class InterestRateService {
         this.interestRateRepository = interestRateRepository;
     }
 
-    public List<InterestRate> getInterestRates() {
+    public List<InterestRate> selectInterestRates() {
         return interestRateRepository.findAll();
     }
 
-    public InterestRate getInterestRateBy(Double interestRate) {
+    public InterestRate selectInterestRateBy(Double interestRate) {
         return interestRateRepository
                 .findByInterestRate(interestRate)
-                .orElseThrow(() -> new RuntimeException("No data found"));
+                .orElseThrow(() -> new RuntimeException("Interest rate not found"));
     }
 }

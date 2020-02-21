@@ -1,6 +1,7 @@
 package alexander.ivanov.creditcalculator.backend.controller;
 
 import alexander.ivanov.creditcalculator.backend.service.InterestRateService;
+import alexander.ivanov.creditcalculator.backend.util.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,16 +21,14 @@ public class InterestRateController {
 
     @GetMapping
     public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok(interestRateService.getInterestRates());
+        return ControllerUtils.getResponseEntity(() -> interestRateService.selectInterestRates());
     }
 
     @GetMapping("/{rate}")
     public ResponseEntity<?> getInterestRateByRate(@PathVariable String rate) {
-        try {
+        return ControllerUtils.getResponseEntity(() -> {
             Double parseRate = Double.parseDouble(rate);
-            return ResponseEntity.ok(interestRateService.getInterestRateBy(parseRate));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+            return interestRateService.selectInterestRateBy(parseRate);
+        });
     }
 }
