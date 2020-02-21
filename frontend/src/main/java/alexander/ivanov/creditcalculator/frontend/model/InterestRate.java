@@ -2,10 +2,14 @@ package alexander.ivanov.creditcalculator.frontend.model;
 
 public class InterestRate {
     private Long interestRateId;
-
     private Double interestRate;
 
     public InterestRate() {
+    }
+
+    public InterestRate(Long interestRateId, Double interestRate) {
+        this.interestRateId = interestRateId;
+        this.interestRate = interestRate;
     }
 
     public InterestRate(Double interestRate) {

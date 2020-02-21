@@ -19,11 +19,4 @@ public class CreditCalcInfos {
     public void setCreditCalcInfos(List<CreditCalcInfo> creditCalcInfos) {
         this.creditCalcInfos = creditCalcInfos;
     }
-
-    @Override
-    public String toString() {
-        return "CreditCalcInfos{" +
-                "creditCalcInfos=" + creditCalcInfos +
-                '}';
-    }
 }
