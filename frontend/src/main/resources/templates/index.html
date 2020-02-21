@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Credit Calculator</title>
+</head>
+<body>
+    <h2>Welcome to Credit Calculator Home Page</h2>
+
+    <!--<form th:method="POST" th:action="@{http://localhost:8080/api/credit-calc-infos}" th:object="${credit}">-->
+    <!--/*@thymesVar id="credit" type="alexander.ivanov.creditcalculator.frontend.model.Credit"*/-->
+    <form th:method="POST" th:object="${credit}">
+        <table th:border="1">
+            <tr>
+                <td><label>Credit Amount</label></td>
+                <td>
+                    <label>
+                        <input type="number" th:field="*{creditAmount}">
+                    </label>
+                </td>
+            </tr>
+
+            <tr>
+                <td><label>Credit Time</label></td>
+                <td>
+                    <input type="number" th:field="*{creditTime}">
+                </td>
+            </tr>
+
+            <tr>
+                <td><label>Credit Rate</label></td>
+                <td>
+                    <!--/*@thymesVar id="interestRate" type="alexander.ivanov.creditcalculator.frontend.model.InterestRate"*/-->
+                    <input type="number" step="0.1" th:object="${credit.interestRate}" th:field="*{interestRate}">
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td><input type="submit" value="Submit"></td>
+            </tr>
+        </table>
+    </form>
+
+    <!--/*@thymesVar id="creditCalcInfos" type="alexander.ivanov.creditcalculator.frontend.model.CreditCalcInfos"*/-->
+    <!--/*@thymesVar id="creditCalcInfos" type="alexander.ivanov.creditcalculator.frontend.model.CreditCalcInfo"*/-->
+    <th:block th:each="creditCalcInfo: ${creditCalcInfos}">
+        <table>
+            <tr>
+                <!--/*@thymesVar id="paymentNum" type="alexander.ivanov.creditcalculator.frontend.model.CreditCalcInfo"*/-->
+                <td th:text="${creditCalcInfo.paymentNum}">th1</td>
+                <td th:text="${creditCalcInfo.monthlyPayment}">th2</td>
+                <td th:text="${creditCalcInfo.period}">th3</td>
+                <td th:text="${creditCalcInfo.debtRepaymentPortion}">th4</td>
+            </tr>
+        </table>
+    </th:block>
+
+    <a th:href="@{http://localhost:8080/api/credit-calc-infos}">Get credit info</a>
+</body>
+</html>
