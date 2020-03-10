@@ -102,8 +102,9 @@ public class CalculatorUtils {
 
             Double total = portions.stream().mapToDouble(aDouble -> aDouble).sum();
 
-            Instant startDateInstant = startDate.toInstant();
-            LocalDateTime localStartDate = LocalDateTime.ofInstant(startDateInstant, ZoneId.systemDefault());
+            /*Instant startDateInstant = startDate.toInstant();
+            LocalDateTime localStartDate = LocalDateTime.ofInstant(startDateInstant, ZoneId.systemDefault());*/
+            LocalDateTime localStartDate = DateUtils.toLocalDateTime(startDate);
 
             int paymentNum = credit.getCreditTime() - i;
 
@@ -111,7 +112,8 @@ public class CalculatorUtils {
                     null,
                     paymentNum+1,
                     monthlyPayment,
-                    localStartDate.plusMonths(paymentNum).format(DateTimeFormatter.ofPattern("MM/yyyy")),
+                    //localStartDate.plusMonths(paymentNum).format(DateTimeFormatter.ofPattern("MM/yyyy")),
+                    DateUtils.toPeriod(localStartDate, paymentNum),
                     debtRepaymentPortion,
                     interestCharges,
                     CalculatorUtils.round2(debt),

@@ -4,16 +4,24 @@ import alexander.ivanov.creditcalculator.backend.model.Credit;
 import alexander.ivanov.creditcalculator.backend.model.CreditCalcInfo;
 import alexander.ivanov.creditcalculator.backend.repository.CreditCalcInfoRepository;
 import alexander.ivanov.creditcalculator.backend.util.CalculatorUtils;
+import alexander.ivanov.creditcalculator.backend.util.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 @Transactional
 @Service
 public class CreditCalcInfoService {
+    private static final Logger logger = LoggerFactory.getLogger(CreditCalcInfoService.class);
+
     private CreditCalcInfoRepository creditCalcInfoRepository;
     private CreditService creditService;
 
@@ -44,7 +52,7 @@ public class CreditCalcInfoService {
         CalculatorUtils.printCreditCalcInfos(filledCredit.getCreditCalcInfos());
 
         List<CreditCalcInfo> creditCalcInfos = selectAllByCredit(filledCredit);
-        if (creditCalcInfos.isEmpty()) {
+        if (creditCalcInfos.isEmpty() || isFirstAndCurrentPeriodNonEquals(creditCalcInfos)) {
             creditCalcInfos = creditCalcInfoRepository.saveAll(filledCredit.getCreditCalcInfos());
         }
 
@@ -53,5 +61,23 @@ public class CreditCalcInfoService {
 
     private List<CreditCalcInfo> selectAllByCredit(Credit credit) {
         return creditCalcInfoRepository.findAllByCredit(credit);
+    }
+
+    private boolean isFirstAndCurrentPeriodNonEquals(List<CreditCalcInfo> creditCalcInfos) {
+        System.out.println("CreditCalcInfoService.isFirstAndCurrentPeriodNonEquals");
+        if (creditCalcInfos.isEmpty()) {
+            return false;
+        }
+
+        Date currentDate = Date.from(Instant.now());
+        LocalDateTime currentLocalDateTime = DateUtils.toLocalDateTime(currentDate);
+        String currentPeriod = DateUtils.toPeriod(currentLocalDateTime, 0);
+
+        CreditCalcInfo firstMonthCreditCalcInfo = creditCalcInfos.get(0);
+        boolean result = !firstMonthCreditCalcInfo.getPeriod().equals(currentPeriod);
+        System.out.println("currentPeriod = " + currentPeriod + ", result = " + result);
+        logger.info("currentPeriod = {}, firstMonthPeriod = {}, result = {}", currentPeriod, firstMonthCreditCalcInfo.getPeriod(), result);
+
+        return result;
     }
 }
