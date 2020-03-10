@@ -5,28 +5,37 @@ import alexander.ivanov.creditcalculator.frontend.model.CreditCalcInfo;
 import alexander.ivanov.creditcalculator.frontend.model.CreditCalcInfos;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.core.ParameterizedTypeReference;
+import org.apache.tomcat.util.net.WriteBuffer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpRequest;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.ui.Model;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.function.ServerRequest;
 
-import java.lang.reflect.Type;
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
+@CrossOrigin
 @RestController
 public class HomeController {
-    private static final RestTemplate restTemplate = new RestTemplate();
+    private RestTemplate backend = new RestTemplate();
+    /*new RestTemplateBuilder()
+            .rootUri("http://localhost:8080")
+            .build();*/
+
+    /*@Autowired
+    public HomeController(RestTemplate restTemplate) {
+        this.backend = restTemplate;
+    }*/
 
     @GetMapping("/")
     public ModelAndView home(@ModelAttribute CreditCalcInfos creditCalcInfos, Model model) {
@@ -51,84 +60,46 @@ public class HomeController {
 
     @PostMapping("/")
     public ModelAndView postHome(@ModelAttribute Credit credit, Model model) throws JsonProcessingException {
-        String jsonCredit = new ObjectMapper().writeValueAsString(credit);
+        //String jsonCredit = new ObjectMapper().writeValueAsString(credit);
+        String jsonCredit = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(credit);
         System.out.println("jsonCredit = " + jsonCredit);
 
-        /*HttpHeaders httpHeaders = HttpHeaders.EMPTY;
-        httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);*/
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
-        HttpEntity<String> creditHttpEntity = new HttpEntity<>(jsonCredit/*, httpHeaders*/);
+        HttpEntity<String> creditHttpEntity = new HttpEntity<>(jsonCredit, httpHeaders);
         System.out.println("creditHttpEntity = " + creditHttpEntity);
         System.out.println("creditHttpEntity = " + creditHttpEntity.getBody());
 
-        /*ResponseEntity<CreditCalcInfos> creditCalcInfos = restTemplate.exchange("http://localhost:8080/api/credit-calc-info",
-                HttpMethod.POST,
-                *//*new HttpEntity<>(jsonCredit)*//*creditHttpEntity,
-                CreditCalcInfos.class
-                //new ParameterizedTypeReference<List<CreditCalcInfo>>() {}
-                *//*ParameterizedTypeReference.forType(new Type() {
-                    @Override
-                    public String getTypeName() {
-                        return new ArrayList<CreditCalcInfo>().toString();
-                    }
-                })*//*
-        );*/
-        /*ResponseEntity<CreditCalcInfos> creditCalcInfos =
-                restTemplate.postForEntity("http://localhost:8080/api/credit-calc-info", jsonCredit, CreditCalcInfos.class);*/
-        /*ResponseEntity<CreditCalcInfos> creditCalcInfos = restTemplate.execute("http://localhost:8080/api/credit-calc-info",
-                HttpMethod.POST,
-                restTemplate.acceptHeaderRequestCallback(credit.getClass()),
-                //restTemplate.httpEntityCallback(credit),
-                restTemplate.responseEntityExtractor(new Type() {
-                    @Override
-                    public String getTypeName() {
-                        return CreditCalcInfos.class.getTypeName();
-                    }
-                })
-        );*/
-        /*CreditCalcInfos creditCalcInfos = restTemplate.postForObject(
-                "http://localhost:8080/api/credit-calc-info",
-                credit,
-                CreditCalcInfos.class
-        );*/
-
-        HttpEntity<Credit> requestEntity = new HttpEntity<>(credit);
+        HttpEntity<?> requestEntity = new HttpEntity<>(jsonCredit);
         System.out.println("requestEntity = " + requestEntity);
         requestEntity.getHeaders().forEach((s, strings) -> {
             System.out.println("s + s2 = " + s + " s2 = " + strings);
         });
+        System.out.println("requestEntity.getBody() = " + requestEntity.getBody());
 
-        ResponseEntity<CreditCalcInfos> creditCalcInfos = restTemplate.exchange(
-                "http://localhost:8080/api/credit-calc-info",
-                HttpMethod.POST,
-                requestEntity,
-                CreditCalcInfos.class
+        /*ResponseEntity<?> result = backend.exchange("http://backend:8080/api/credits", HttpMethod.GET, null, String.class);
+        System.out.println("result.getBody() = " + result.getBody());
+        System.out.println("backend = " + backend);*/
+
+        CreditCalcInfo[] creditCalcInfos = backend.postForObject(
+                URI.create("http://backend:8080/api/credit-calc-info"),
+                creditHttpEntity,
+                CreditCalcInfo[].class
         );
 
-        System.out.println("creditCalcInfos = " + creditCalcInfos);
-        model.addAttribute("creditCalcInfos", creditCalcInfos);
-
-        /*System.out.println("responseInfos = " + responseInfos);
-        List<CreditCalcInfo> infos = responseInfos.getBody();
-        System.out.println("infos = " + infos);*/
-
-        //CreditCalcInfos infos = responseInfos.getBody();
-        /*if (infos != null) {
-            infos.getCreditCalcInfos().forEach(creditCalcInfo -> {
-                System.out.println("!creditCalcInfo = " + creditCalcInfo);
-            });
-        }*/
-
-        /*if (infos != null) {
-            model.addAttribute("creditCalcInfos", new CreditCalcInfos(infos));
-        }*/
+        if (creditCalcInfos != null) {
+            System.out.println("creditCalcInfos = " + Arrays.asList(creditCalcInfos));
+        }
+        model.addAttribute("creditCalcInfos", new CreditCalcInfos(creditCalcInfos));
 
         return new ModelAndView("index.html");
     }
 
     @ModelAttribute("creditCalcInfos")
     public CreditCalcInfos getCreditCalcInfos() {
-        return new CreditCalcInfos(Collections.emptyList());
+        //return new CreditCalcInfos(Collections.emptyList());
+        return new CreditCalcInfos(new CreditCalcInfo[]{});
     }
 
     @ModelAttribute("credit")

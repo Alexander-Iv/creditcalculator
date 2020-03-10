@@ -41,9 +41,15 @@
         </table>
     </form>
 
-    <!--/*@thymesVar id="creditCalcInfos" type="alexander.ivanov.creditcalculator.frontend.model.CreditCalcInfos"*/-->
-    <table th:each="creditCalcInfo: ${creditCalcInfos.creditCalcInfos}">
+    <table border="1" th:unless="${#arrays.isEmpty(creditCalcInfos.creditCalcInfos)}">
         <tr>
+            <th>Payment Num</th>
+            <th>Monthly Payment</th>
+            <th>Period</th>
+            <th>Debt Repayment Portion</th>
+        </tr>
+        <!--/*@thymesVar id="creditCalcInfos" type="alexander.ivanov.creditcalculator.frontend.model.CreditCalcInfos"*/-->
+        <tr th:each="creditCalcInfo: ${creditCalcInfos.creditCalcInfos}">
             <!--<td th:text="${creditCalcInfo}">th1</td>-->
             <td th:text="${creditCalcInfo.paymentNum}">th1</td>
             <td th:text="${creditCalcInfo.monthlyPayment}">th2</td>
